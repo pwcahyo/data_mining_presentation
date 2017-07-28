@@ -99,13 +99,38 @@ def runApriori(data_iter, minSupport, minConfidence):
 
 def printResults(items, rules):
     """prints the generated itemsets sorted by support and the confidence rules sorted by confidence"""
+    dSupport = {}
     for item, support in sorted(items, key=lambda (item, support): support):
-        print "item: %s , %.3f" % (str(item), support)
-    print "\n------------------------ RULES:"
+        dSupport[item] = support
+        print("item: %s , %.3f" % (str(item), support))
+
     for rule, confidence in sorted(rules, key=lambda (rule, confidence): confidence):
         pre, post = rule
-        print "Rule: %s ==> %s , %.3f" % (str(pre), str(post), confidence)
+        tempRule=()
+        tempRule+=pre
+        tempRule+=post
+        supportAimplikasiB = getSupportAimplikasiB(tempRule, dSupport)
+        lift = supportAimplikasiB/(dSupport[pre]*dSupport[post])
+        print("Rule: %s ==> %s : [confidence is %.3f, lift is %.3f]" % (str(pre), str(post), confidence, lift))
 
+def getSupportAimplikasiB(A, B):
+    rule = list(A)
+    dict_support = B
+    result = 0
+    for index_dict_support in dict_support:
+        list_index_dict_support = list(index_dict_support)
+        check = []
+        for data_index in list_index_dict_support:
+            if data_index in rule and len(list_index_dict_support) >= len(rule):
+                check.append(True)
+            else:
+                check.append(False)
+        if(reduce(mul, check, 1)==True):
+#             print(list_index_dict_support)
+#             print(dict_support[index_dict_support])
+            result = dict_support[index_dict_support]
+    
+    return result
 
 def dataFromFile(fname):
         """Function which reads from the file and yields a generator"""
