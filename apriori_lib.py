@@ -1,11 +1,3 @@
-import sys
-
-from itertools import chain, combinations
-from collections import defaultdict
-from optparse import OptionParser
-from openpyxl import load_workbook
-import pandas as pd
-
 def subsets(arr):
     """ Returns non empty subsets of arr"""
     return chain(*[combinations(arr, i + 1) for i, a in enumerate(arr)])
